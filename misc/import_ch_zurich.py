@@ -17,20 +17,28 @@
 """Imports Zurich timetables, converting them from DIVA export format
 to Google Transit format."""
 from __future__ import print_function
+from __future__ import division
 
 # This was written before transitfeed.py and we haven't yet found the
 # motivation to port it. Please see the examples directory for better
 # examples.
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import next
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 try:  #py2
-  from StringIO import StringIO
+  from io import StringIO
 except ImportError:
   from io import StringIO
 import csv
 import datetime
 import optparse
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import zipfile
 
 
@@ -98,8 +106,8 @@ def ReadCSV(s, cols):
 
 def ConvertCH1903(x, y):
   "Converts coordinates from the 1903 Swiss national grid system to WGS-84."
-  yb = (x - 600000.0) / 1e6;
-  xb = (y - 200000.0) / 1e6;
+  yb = old_div((x - 600000.0), 1e6);
+  xb = old_div((y - 200000.0), 1e6);
   lam = 2.6779094 \
      + 4.728982 * yb \
      + 0.791484 * yb * xb \
@@ -129,19 +137,19 @@ def WriteRow(stream, values):
   stream.write('\n')
 
 
-class Station:
+class Station(object):
   pass
 
 
-class Route:
+class Route(object):
   pass
 
 
-class Pattern:
+class Pattern(object):
   pass
 
 
-class Trip:
+class Trip(object):
   pass
 
 
@@ -150,7 +158,7 @@ TYPE_TRAM = 0
 TYPE_BUS = 3
 
 
-class DivaImporter:
+class DivaImporter(object):
   def __init__(self, coord_converter, drop_unadvertised_lines):
     self.coord_converter = coord_converter
     self.stations = {}   # id --> Station
@@ -221,7 +229,7 @@ class DivaImporter:
       station.name, station.city = self.DemangleName(name)
       station.country = 'CH'
       station.url = 'http://fahrplan.zvv.ch/?to.0=' + \
-                    urllib.quote(name.encode('iso-8859-1'))
+                    urllib.parse.quote(name.encode('iso-8859-1'))
       station.advertised_lines = set()
       self.stations[id] = station
     for station_id, line_id in ReadCSV(adv_file, ['ORT_NR', 'LI_NR']):
@@ -297,17 +305,17 @@ class DivaImporter:
       schedule = schedule.strip()
       daytypes.setdefault('%s.%s' % (schedule, daytype), {})[int(date)] = 1
       schedules[schedule] = 1
-    schedules = schedules.keys()
+    schedules = list(schedules.keys())
 
     service_days = {}  # 'Cj06.H9' --> {20060713:1, 20060714:1, ...}
     for daytype, service_id in \
     ReadCSV(daytype_file, ['TAGESART_NR', 'TAGESMERKMAL_NR']):
       for schedule in schedules:
         service = 'C%s.%s' % (schedule, service_id)
-        for date in daytypes['%s.%s' % (schedule, daytype)].iterkeys():
+        for date in list(daytypes['%s.%s' % (schedule, daytype)].keys()):
           service_days.setdefault(service, {})[date] = 1
-    for k in service_days.iterkeys():
-      self.services[k] = service_days[k].keys()
+    for k in list(service_days.keys()):
+      self.services[k] = list(service_days[k].keys())
       self.services[k].sort()
 
   def ImportTrafficRestrictions(self, restrictions_file):
@@ -332,12 +340,12 @@ class DivaImporter:
         mask=int(bitmask[i*8:i*8+8], 16)
         for d in range(32):
           if 1 << d & mask:
-            year=int(start_date[0:4])+ ((int(start_date[4:6]) + i -1 )) / 12
+            year=int(start_date[0:4])+ old_div(((int(start_date[4:6]) + i -1 )), 12)
             month=((int(start_date[4:6]) + i-1 ) % 12) +1
             day=d+1
             cur_date = str(year)+("0"+str(month))[-2:]+("0"+str(day))[-2:]
             dates[int(cur_date)] = 1
-      self.services[id] = dates.keys()
+      self.services[id] = list(dates.keys())
       self.services[id].sort()
 
   def ImportStopTimes(self, stoptimes_file):
@@ -409,7 +417,7 @@ class DivaImporter:
   def WriteRoutes(self, out):
     out.write('route_id,route_short_name,route_long_name,route_type,'
               'route_color,route_text_color\n')
-    k = [(r.id, r) for r in self.routes.itervalues()]
+    k = [(r.id, r) for r in list(self.routes.values())]
     k.sort()
     for id, route in k:
       name = EncodeForCSV(route.name)
@@ -419,7 +427,7 @@ class DivaImporter:
   def WriteStations(self, out):
     out.write('stop_id,stop_uic_code,stop_name,stop_city,stop_country,'
               'stop_lat,stop_lon,stop_url\n')
-    stations = [(s.id, s) for s in self.stations.itervalues()]
+    stations = [(s.id, s) for s in list(self.stations.values())]
     stations.sort()
     for id, s in stations:
       WriteRow(out,
@@ -429,20 +437,20 @@ class DivaImporter:
   def WriteCalendar(self, out):
     out.write('service_id,monday,tuesday,wednesday,thursday,'
               'friday,saturday,sunday,start_date,end_date\n')
-    for service_id, service in self.services.iteritems():
+    for service_id, service in list(self.services.items()):
       out.write('%s,0,0,0,0,0,0,0,%d,%d\n' %
                (EncodeForCSV(service_id), service[0], service[-1]))
 
   def WriteCalendarDates(self, out):
     out.write('service_id,date,exception_type\n')
-    for service_id, service in self.services.iteritems():
+    for service_id, service in list(self.services.items()):
       encoded_service_id = EncodeForCSV(service_id)
       for date in service:
         out.write('%s,%d,1\n' % (encoded_service_id, date))
 
   def WriteTrips(self, out):
     out.write('trip_id,route_id,service_id,trip_headsign\n')
-    trips = [(t.id, t) for t in self.trips.itervalues()]
+    trips = [(t.id, t) for t in list(self.trips.values())]
     trips.sort()
     for (trip_id, trip) in trips:
       if (not len(trip.pattern.stops)) or (None in trip.pattern.stops):
@@ -453,12 +461,12 @@ class DivaImporter:
       WriteRow(out, [trip.id, trip.route.id, trip.service_id, headsign])
 
   def FormatTime(self, t):
-    return "%02d:%02d:%02d" % (t / 3600, (t % 3600)/60, t % 60)
+    return "%02d:%02d:%02d" % (old_div(t, 3600), old_div((t % 3600),60), t % 60)
 
   def WriteStopTimes(self, out):
     out.write('trip_id,stop_sequence,stop_id,arrival_time,departure_time,'
               'pickup_type,drop_off_type\n')
-    trips = [(t.id, t) for t in self.trips.itervalues()]
+    trips = [(t.id, t) for t in list(self.trips.values())]
     trips.sort()
     for (trip_id, trip) in trips:
       if trip_id not in self.goodTrips:

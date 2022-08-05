@@ -41,7 +41,7 @@ class Route(GtfsObjectBase):
     }
   # Create a reverse lookup dict of route type names to route types.
   _ROUTE_TYPE_IDS = set(_ROUTE_TYPES.keys())
-  _ROUTE_TYPE_NAMES = dict((v['name'], k) for k, v in _ROUTE_TYPES.items())
+  _ROUTE_TYPE_NAMES = dict((v['name'], k) for k, v in list(_ROUTE_TYPES.items()))
   _TABLE_NAME = 'routes'
 
   def __init__(self, short_name=None, long_name=None, route_type=None,

@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from future import standard_library
+standard_library.install_aliases()
 try:  # py2
-  from StringIO import StringIO
+  from io import StringIO
 except ImportError:
   from io import StringIO

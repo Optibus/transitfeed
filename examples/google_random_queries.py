@@ -24,7 +24,12 @@ look at the time of each leg. Also check the route names and headsigns are
 formatted correctly and not redundant.
 """
 from __future__ import print_function
+from __future__ import division
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from past.utils import old_div
 from datetime import datetime
 from datetime import timedelta
 import math
@@ -33,8 +38,8 @@ import os.path
 import random
 import sys
 import transitfeed
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 
 
 def Distance(lat0, lng0, lat1, lng1):
@@ -70,8 +75,8 @@ def AddNoiseToLatLng(lat, lng):
   """Add up to 500m of error to each coordinate of lat, lng."""
   m_per_tenth_lat = Distance(lat, lng, lat + 0.1, lng)
   m_per_tenth_lng = Distance(lat, lng, lat, lng + 0.1)
-  lat_per_100m = 1 / m_per_tenth_lat * 10
-  lng_per_100m = 1 / m_per_tenth_lng * 10
+  lat_per_100m = old_div(1, m_per_tenth_lat) * 10
+  lng_per_100m = old_div(1, m_per_tenth_lng) * 10
   return (lat + (lat_per_100m * 5 * (random.random() * 2 - 1)),
           lng + (lng_per_100m * 5 * (random.random() * 2 - 1)))
 
@@ -105,8 +110,8 @@ def LatLngsToGoogleUrl(source, destination, dt):
             "dirflg": "r",
             "ie": "UTF8",
             "oe": "UTF8"}
-  url = urlparse.urlunsplit(("http", "maps.google.com", "/maps",
-                             urllib.urlencode(params), ""))
+  url = urllib.parse.urlunsplit(("http", "maps.google.com", "/maps",
+                             urllib.parse.urlencode(params), ""))
   return url
 
 

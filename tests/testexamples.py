@@ -3,17 +3,19 @@
 # Test the examples to make sure they are not broken
 
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
 import os
 import re
 import transitfeed
 import unittest
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from tests import util
 
 class WikiExample(util.TempDirTestCaseBase):
   # Download example from wiki and run it
   def runTest(self):
-    wiki_source = urllib.urlopen(
+    wiki_source = urllib.request.urlopen(
       'https://raw.githubusercontent.com/wiki/google/transitfeed/TransitFeed.md'
     ).read()
     m = re.search(r'```\s*(import transitfeed.*)```', wiki_source, re.DOTALL)

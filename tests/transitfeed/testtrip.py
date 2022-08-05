@@ -15,7 +15,10 @@
 # Unit tests for the trip module.
 from __future__ import absolute_import
 
-from StringIO import StringIO
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from io import StringIO
 from tests import util
 import transitfeed
 

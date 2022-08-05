@@ -40,6 +40,8 @@ Usage:
 
 from __future__ import print_function
 
+from builtins import str
+from builtins import object
 from enum import Enum
 import argparse
 import csv
@@ -171,14 +173,14 @@ class GtfsReader(object):
 
     @property
     def locations(self):
-        return self._locations_map.values()
+        return list(self._locations_map.values())
 
     def get_pathway(self, stop_id):
         return self._pathways_map[stop_id]
 
     @property
     def pathways(self):
-        return self._pathways_map.values()
+        return list(self._pathways_map.values())
 
     def _read_locations(self):
         self._locations_map = self._read_table('stops', GtfsLocation)
@@ -210,7 +212,7 @@ def escape_graphviz_id(gtfs_id):
 
 
 def truncate_string(s, max_length=20):
-    s = unicode(s, 'utf-8', errors='ignore')
+    s = str(s, 'utf-8', errors='ignore')
     if max_length > 0 and len(s) > max_length:
         s = u'%s..%s' % (s[:max_length - 4], s[-2:])
     return s.encode('utf-8')
@@ -243,7 +245,7 @@ class GraphViz(object):
 
     def __str__(self):
         result = 'digraph D {\n  node [ %s ]\n' % Attributes(style='filled')
-        for cluster in self.clusters.values():
+        for cluster in list(self.clusters.values()):
             result += '\n  %s\n' % cluster.indent(1)
         for node in self.nodes:
             result += '  %s\n' % node
@@ -292,7 +294,7 @@ class GraphCluster(object):
                 style='filled',
                 color=self.color,
                 label=self.label))
-        for cluster in self.clusters.values():
+        for cluster in list(self.clusters.values()):
             result += '\n%s  %s\n' % (indent_str, cluster.indent(level + 1))
         for node in self.nodes:
             result += '\n%s  %s\n' % (indent_str, node)

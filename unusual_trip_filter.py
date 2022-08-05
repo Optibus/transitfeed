@@ -21,7 +21,10 @@ Filters out trips which are not on the defualt routes and
 For usage information run unusual_trip_filter.py --help
 """
 from __future__ import print_function
+from __future__ import division
 
+from builtins import object
+from past.utils import old_div
 __author__ = 'Jiri Semecky <jiri.semecky@gmail.com>'
 
 import codecs
@@ -61,8 +64,8 @@ class UnusualTripFilter(object):
       return
     self.info('Filtering infrequent trips for route %s.' % route.route_id)
     trip_count = len(route.trips)
-    for pattern_id, pattern in route.GetPatternIdTripDict().items():
-      ratio = float(1.0 * len(pattern) / trip_count)
+    for pattern_id, pattern in list(route.GetPatternIdTripDict().items()):
+      ratio = float(old_div(1.0 * len(pattern), trip_count))
       if not self._force:
         if (ratio < self._threshold):
           self.info("\t%d trips on route %s with headsign '%s' recognized "
@@ -92,7 +95,7 @@ class UnusualTripFilter(object):
   def filter(self, dataset):
     """Mark unusual trips for all the routes in the dataset."""
     self.info('Going to filter infrequent routes in the dataset')
-    for route in dataset.routes.values():
+    for route in list(dataset.routes.values()):
       self.filter_line(route)
 
   def info(self, text):

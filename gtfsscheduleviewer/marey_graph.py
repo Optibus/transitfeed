@@ -33,12 +33,19 @@ http://transliteracies.english.ucsb.edu/post/research-project/research-clearingh
 
 """
 from __future__ import print_function
+from __future__ import division
 
+from builtins import zip
+from builtins import hex
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import itertools
 import transitfeed
 
 
-class MareyGraph:
+class MareyGraph(object):
   """Produces and caches marey graph from transit feed data."""
 
   _MAX_ZOOM = 5.0 # change docstring of ChangeScaleFactor if this changes
@@ -229,7 +236,7 @@ class MareyGraph:
       [0,33,140, ... ,X]
     """
     e_dists2 = [transitfeed.ApproximateDistanceBetweenStops(stop, tail) for
-                (stop,tail) in itertools.izip(slist, slist[1:])]
+                (stop,tail) in zip(slist, slist[1:])]
 
     return e_dists2
 
@@ -289,7 +296,7 @@ class MareyGraph:
       trip = triplist[0]
 
     t_dists2 = [DistanceInTravelTime(stop[3],tail[2]) for (stop,tail)
-                 in itertools.izip(trip.GetTimeStops(),trip.GetTimeStops()[1:])]
+                 in zip(trip.GetTimeStops(),trip.GetTimeStops()[1:])]
     return t_dists2
 
   def _AddWarning(self, str):
@@ -324,7 +331,7 @@ class MareyGraph:
       if not colpar:
         if t.service_id not in servlist:
           servlist.append(t.service_id)
-        shade = int(servlist.index(t.service_id) * (200/len(servlist))+55)
+        shade = int(servlist.index(t.service_id) * (old_div(200,len(servlist)))+55)
         color = "#00%s00" %  hex(shade)[2:4]
       else:
         color=colpar
@@ -391,7 +398,7 @@ class MareyGraph:
                        % (i + .5 + 20, 20, i + .5 + 20, self._gheight))
         tmpstrs.append('<text class="Label" x="%d" y="%d">%d</text>'
                        % (i + 20, 20,
-                         (i / self._hour_grid + self._offset) % 24))
+                         (old_div(i, self._hour_grid) + self._offset) % 24))
       else:
         tmpstrs.append('<polyline class="SubHour" points="%d,%d,%d,%d" />' \
                        % (i + .5 + 20, 20, i + .5 + 20, self._gheight))
@@ -463,8 +470,8 @@ class MareyGraph:
     self._decorators.append(tmpstr)
 
   def SetSpan(self, first_arr, last_arr, mint=5 ,maxt=30):
-    s_hour = (first_arr / 3600) - 1
-    e_hour = (last_arr / 3600) + 1
+    s_hour = (old_div(first_arr, 3600)) - 1
+    e_hour = (old_div(last_arr, 3600)) + 1
     self._offset = max(min(s_hour, 23), 0)
     self._tspan = max(min(e_hour - s_hour, maxt), mint)
     self._gwidth = self._tspan * self._hour_grid

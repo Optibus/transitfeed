@@ -15,8 +15,11 @@
 # Unit tests for the loader module.
 from __future__ import absolute_import
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import re
-from StringIO import StringIO
+from io import StringIO
 import tempfile
 from tests import util
 import transitfeed

@@ -39,6 +39,7 @@ Run merge.py --help for a list of the possible options.
 from __future__ import print_function
 
 
+from builtins import object
 __author__ = 'timothy.stranex@gmail.com (Timothy Stranex)'
 
 
@@ -237,7 +238,7 @@ class HTMLProblemAccumulator(transitfeed.ProblemAccumulatorInterface):
 
     prefix = '<h2 class="issueHeader">%s:</h2>' % heading
     dataset_sections = []
-    for dataset_merger, problems in dataset_problems.items():
+    for dataset_merger, problems in list(dataset_problems.items()):
       dataset_sections.append('<h3>%s</h3><ol>%s</ol>' % (
           dataset_merger.FILE_NAME, '\n'.join(problems)))
     body = '\n'.join(dataset_sections)
@@ -271,7 +272,7 @@ class HTMLProblemAccumulator(transitfeed.ProblemAccumulatorInterface):
     items = []
     for e in self._notices:
       d = e.GetDictToFormat()
-      if 'url' in d.keys():
+      if 'url' in list(d.keys()):
         d['url'] = '<a href="%(url)s">%(url)s</a>' % d
       items.append('<li class="notice">%s</li>' %
                    e.FormatProblem(d).replace('\n', '<br>'))
@@ -505,7 +506,7 @@ class DataSetMerger(object):
       MergeError: One of the attributes was not able to be merged.
     """
     migrated = self._Migrate(b, self.feed_merger.b_schedule, False)
-    for attr, merger in scheme.items():
+    for attr, merger in list(scheme.items()):
       a_attr = getattr(a, attr, None)
       b_attr = getattr(b, attr, None)
       try:
@@ -605,11 +606,11 @@ class DataSetMerger(object):
       migrated = self._Migrate(orig, self.feed_merger.b_schedule)
       b_orig_migrated[self._GetId(migrated)] = (orig, migrated)
 
-    for migrated_id, (orig, migrated) in b_orig_migrated.items():
+    for migrated_id, (orig, migrated) in list(b_orig_migrated.items()):
       self._Add(None, orig, migrated)
       self._num_not_merged_b += 1
 
-    for migrated_id, (orig, migrated) in a_orig_migrated.items():
+    for migrated_id, (orig, migrated) in list(a_orig_migrated.items()):
       if migrated_id not in b_orig_migrated:
         self._Add(orig, None, migrated)
         self._num_not_merged_a += 1
@@ -1634,7 +1635,7 @@ class FeedMerger(object):
                     'shape_id': schedule.GetShapeList()}
 
     max_postfix_number = 0
-    for id_name, entity_list in id_data_sets.items():
+    for id_name, entity_list in list(id_data_sets.items()):
       for entity in entity_list:
         entity_id = getattr(entity, id_name)
         postfix_number = ExtractPostfixNumber(entity_id)

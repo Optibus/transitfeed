@@ -18,13 +18,17 @@
 database dumps its contents in XML. This scripts converts the proprietary XML
 format into a Google Transit Feed Specification file.
 """
+from __future__ import division
 
+from future import standard_library
+standard_library.install_aliases()
+from past.utils import old_div
 import datetime
 from optparse import OptionParser
 import os.path
 import re
 import transitfeed
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 try:
   import xml.etree.ElementTree as ET  # python 2.5
@@ -45,7 +49,7 @@ class NoUnusedStopExceptionProblemReporter(transitfeed.ProblemReporter):
     pass
 
 def SaveFeed(input, output):
-  tree = ET.parse(urllib.urlopen(input))
+  tree = ET.parse(urllib.request.urlopen(input))
 
   schedule = transitfeed.Schedule()
   service_period = schedule.GetDefaultServicePeriod()
@@ -83,7 +87,7 @@ def SaveFeed(input, output):
           trip_id=xml_route.attrib['id'])
       trip_stops = []  # Build a list of (time, Stop) tuples
       for xml_schedule in xml_route.getiterator('schedule'):
-        trip_stops.append( (int(xml_schedule.attrib['time']) / 1000,
+        trip_stops.append( (old_div(int(xml_schedule.attrib['time']), 1000),
                             stops[xml_schedule.attrib['stopId']]) )
       trip_stops.sort()  # Sort by time
       for (time, stop) in trip_stops:

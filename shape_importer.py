@@ -20,6 +20,9 @@ Requires the ogr python package.
 """
 from __future__ import print_function
 
+from builtins import zip
+from builtins import str
+from builtins import range
 __author__ = 'chris.harrelson.code@gmail.com (Chris Harrelson)'
 
 import csv
@@ -215,7 +218,7 @@ def main(key_cols):
   for route in schedule.GetRouteList():
     print('Processing route', route.route_short_name)
     patterns = route.GetPatternIdTripDict()
-    for pattern_id, trips in patterns.iteritems():
+    for pattern_id, trips in list(patterns.items()):
       pattern_count += 1
       pattern = trips[0].GetPattern()
 

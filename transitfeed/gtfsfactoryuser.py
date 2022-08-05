@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from builtins import object
 class GtfsFactoryUser(object):
   """Base class for objects that must store a GtfsFactory in order to
      be able to instantiate Gtfs classes.

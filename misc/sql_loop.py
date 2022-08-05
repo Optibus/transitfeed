@@ -18,6 +18,8 @@
 from __future__ import print_function
 
 
+from builtins import next
+from builtins import str
 import cmd
 import re
 import csv
@@ -154,7 +156,7 @@ def main():
     cursor.execute(args[0])
     writer.writerow([desc[0] for desc in cursor.description])
     for row in cursor:
-      writer.writerow([unicode(v).encode('utf8') for v in row])
+      writer.writerow([str(v).encode('utf8') for v in row])
   elif options.interactive:
     loop = SqlLoop(cursor)
     loop.cmdloop()

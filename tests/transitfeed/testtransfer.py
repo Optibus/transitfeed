@@ -15,7 +15,9 @@
 # Unit tests for the transfer module.
 from __future__ import absolute_import
 
-from StringIO import StringIO
+from future import standard_library
+standard_library.install_aliases()
+from io import StringIO
 import transitfeed
 from tests import util
 

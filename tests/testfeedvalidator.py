@@ -18,6 +18,10 @@
 # for a valid feed and a feed with errors.
 
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from builtins import object
 import datetime
 import feedvalidator
 import os.path
@@ -26,8 +30,8 @@ from tests import util
 import transitfeed
 from transitfeed.compat import StringIO
 import unittest
-from urllib2 import HTTPError, URLError
-import urllib2
+from urllib.error import HTTPError, URLError
+import urllib.request, urllib.error, urllib.parse
 import zipfile
 
 
@@ -272,7 +276,7 @@ class CalendarSummaryTestCase(util.TestCase):
       self.assertEquals({}, result)
 
 
-class MockOptions:
+class MockOptions(object):
   """Pretend to be an optparse options object suitable for testing."""
   def __init__(self):
     self.limit_per_type = 5

@@ -199,7 +199,7 @@ class TempDirTestCaseBase(GetPathTestCase):
         The new file's in-memory contents as a file-like object."""
     zipfile_mem = StringIO()
     zip = zipfile.ZipFile(zipfile_mem, 'a')
-    for arcname, contents in dict.items():
+    for arcname, contents in list(dict.items()):
       zip.writestr(arcname, contents)
     zip.close()
     return zipfile_mem
@@ -315,13 +315,13 @@ class MemoryZipTestCase(TestCase):
 
   def GetArchiveNames(self):
     """Get a list of all the archive names in the file dict."""
-    return self.zip_contents.keys()
+    return list(self.zip_contents.keys())
 
   def CreateZip(self):
     """Create an in-memory GTFS zipfile from the contents of the file dict."""
     self.zipfile = StringIO()
     self.zip = zipfile.ZipFile(self.zipfile, 'a')
-    for (arcname, contents) in self.zip_contents.items():
+    for (arcname, contents) in list(self.zip_contents.items()):
       self.zip.writestr(arcname, contents)
 
   def DumpZipFile(self, zf):

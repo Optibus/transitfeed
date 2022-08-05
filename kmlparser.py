@@ -29,6 +29,7 @@ For line geometries, information about shapes is extracted from a kml file.
 """
 from __future__ import print_function
 
+from builtins import object
 import re
 import string
 import sys
