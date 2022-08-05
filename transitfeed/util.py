@@ -21,7 +21,7 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import input
 from builtins import next
-from builtins import str
+from future.utils import text_type as str
 from past.builtins import basestring
 from builtins import object
 from past.utils import old_div

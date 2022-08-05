@@ -24,12 +24,18 @@ import codecs
 import csv
 import os
 import re
+import sys
 import zipfile
 
 from . import gtfsfactoryuser
 from . import problems
 from . import util
-from .compat import StringIO
+
+if sys.version_info[0] >= 3:
+  from .compat import StringIO
+else:
+  from io import BytesIO as StringIO
+
 
 class Loader(object):
   def __init__(self,
