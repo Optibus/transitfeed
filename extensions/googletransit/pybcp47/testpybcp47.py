@@ -17,6 +17,7 @@
 # Unit tests for the bcp47languageparser module.
 
 from __future__ import absolute_import
+from builtins import str
 import codecs
 import os
 import unittest
@@ -31,19 +32,19 @@ class PyBcp47TestCase(unittest.TestCase):
     # valid. The registry file in this package is originally downloaded from
     # http://www.iana.org/assignments/language-subtag-registry. Formatting
     # rules of this file can be found at http://tools.ietf.org/html/rfc5646
-    for tag in self.bcp47parser.grandfathereds.keys():
+    for tag in list(self.bcp47parser.grandfathereds.keys()):
       self.assertTrue(self.bcp47parser.IsWellformed(tag),
                       "Grandfathered tag '%s' in language-subtag-registry.txt "
                       "seems to be invalid!" % (tag))
-    for tag in self.bcp47parser.redundants.keys():
+    for tag in list(self.bcp47parser.redundants.keys()):
       self.assertTrue(self.bcp47parser.IsWellformed(tag),
                       "Redundant tag '%s' in language-subtag-registry.txt "
                       "seems to be invalid!" % (tag))
-    for tag in self.bcp47parser.languages.keys():
+    for tag in list(self.bcp47parser.languages.keys()):
       self.assertTrue(self.bcp47parser.IsWellformedSubtag(tag, "lang"),
                       "Language subtag '%s' in language-subtag-registry.txt "
                       "seems to be invalid!" % (tag))
-    for tag in self.bcp47parser.extlangs.keys():
+    for tag in list(self.bcp47parser.extlangs.keys()):
       # extlangs contains each for each extlang just the tag and the tag
       # combined with its prefix. E.g. 'aao' and 'ar-aao'.
       extlang_parts = tag.split("-")
@@ -51,15 +52,15 @@ class PyBcp47TestCase(unittest.TestCase):
       self.assertTrue(self.bcp47parser.IsWellformedSubtag(extlang, "extlang"),
                       "Extlang subtag '%s' in language-subtag-registry.txt "
                       "seems to be invalid!" % (tag))
-    for tag in self.bcp47parser.scripts.keys():
+    for tag in list(self.bcp47parser.scripts.keys()):
       self.assertTrue(self.bcp47parser.IsWellformedSubtag(tag, "script"),
                       "Script subtag '%s' in language-subtag-registry.txt "
                       "seems to be invalid!" % (tag))
-    for tag in self.bcp47parser.regions.keys():
+    for tag in list(self.bcp47parser.regions.keys()):
       self.assertTrue(self.bcp47parser.IsWellformedSubtag(tag, "region"),
                       "Region subtag '%s' in language-subtag-registry.txt "
                       "seems to be invalid!" % (tag))
-    for tag in self.bcp47parser.variants.keys():
+    for tag in list(self.bcp47parser.variants.keys()):
       self.assertTrue(self.bcp47parser.IsWellformedSubtag(tag, "variant"),
                       "Variant subtag '%s' in language-subtag-registry.txt "
                       "seems to be invalid!" % (tag))

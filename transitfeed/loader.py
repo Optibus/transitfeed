@@ -15,6 +15,11 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from builtins import next
+from builtins import zip
+from builtins import range
+from past.builtins import basestring
+from builtins import object
 import codecs
 import csv
 import os
@@ -26,7 +31,7 @@ from . import problems
 from . import util
 from .compat import StringIO
 
-class Loader:
+class Loader(object):
   def __init__(self,
                feed_path=None,
                schedule=None,
@@ -185,7 +190,7 @@ class Loader:
       valid_columns.append(i)
       header_occurrences[h_stripped] += 1
 
-    for name, count in header_occurrences.items():
+    for name, count in list(header_occurrences.items()):
       if count > 1:
         self._problems.DuplicateColumn(
             header=name,
@@ -276,7 +281,7 @@ class Loader:
       # of both the Google and OneBusAway GTFS parser.
       valid_values = [value.strip() for value in valid_values]
 
-      d = dict(zip(header, valid_values))
+      d = dict(list(zip(header, valid_values)))
       yield (d, line_num, header, valid_values)
 
   # TODO: Add testing for this specific function
@@ -292,12 +297,12 @@ class Loader:
     reader = csv.reader(eol_checker)  # Use excel dialect
 
     header = next(reader)
-    header = map(lambda x: x.strip(), header)  # trim any whitespace
+    header = [x.strip() for x in header]  # trim any whitespace
     header_occurrences = util.defaultdict(lambda: 0)
     for column_header in header:
       header_occurrences[column_header] += 1
 
-    for name, count in header_occurrences.items():
+    for name, count in list(header_occurrences.items()):
       if count > 1:
         self._problems.DuplicateColumn(
             header=name,
@@ -485,7 +490,7 @@ class Loader:
 
     # Now insert the periods into the schedule object, so that they're
     # validated with both calendar and calendar_dates info present
-    for period, context in periods.values():
+    for period, context in list(periods.values()):
       self._problems.SetFileContext(*context)
       self._schedule.AddServicePeriodObject(period, self._problems)
       self._problems.ClearContext()
@@ -520,7 +525,7 @@ class Loader:
       shape.AddShapePointObjectUnsorted(shapepoint, self._problems)
       self._problems.ClearContext()
 
-    for shape_id, shape in shapes.items():
+    for shape_id, shape in list(shapes.items()):
       self._schedule.AddShapeObject(shape, self._problems)
       del shapes[shape_id]
 

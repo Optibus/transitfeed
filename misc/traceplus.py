@@ -34,7 +34,7 @@ def MakeExpandedTrace(frame_records):
           dump.append(' --> %s' % line)
         else:
           dump.append('     %s' % line)
-    for local_name, local_val in frame_obj.f_locals.items():
+    for local_name, local_val in list(frame_obj.f_locals.items()):
       try:
         local_type_name = type(local_val).__name__
       except Exception as e:

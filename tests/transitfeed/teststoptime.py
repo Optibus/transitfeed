@@ -15,6 +15,7 @@
 # Unit tests for the stoptime module.
 from __future__ import absolute_import
 
+from builtins import range
 import transitfeed
 from tests import util
 

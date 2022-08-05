@@ -14,6 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import division
+from builtins import next
+from builtins import map
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import codecs
 import os
 from pkg_resources import resource_string
@@ -136,13 +142,13 @@ class Bcp47LanguageParser(object):
                                     line_number)
 
   def IntStr26ToInt(self, int_str):
-    return reduce(lambda x, y: 26 * x + y, map(string.lowercase.index, int_str))
+    return reduce(lambda x, y: 26 * x + y, list(map(string.lowercase.index, int_str)))
 
   def IntToIntStr26(self, int_value, int_str=''):
     if int_value == 0:
       return int_str
     return self.IntToIntStr26(
-        int_value/26, string.lowercase[int_value%26] + int_str)
+        old_div(int_value,26), string.lowercase[int_value%26] + int_str)
 
   def _AddSubtagFromRegistryFile(self, current_type, current_tag,
                                  current_descriptions, current_prefixes,

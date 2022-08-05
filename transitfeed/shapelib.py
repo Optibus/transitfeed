@@ -29,7 +29,13 @@ is adequate; for other purposes, this library may not be accurate
 enough.
 """
 from __future__ import print_function
+from __future__ import division
 
+from past.builtins import cmp
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 __author__ = 'chris.harrelson.code@gmail.com (Chris Harrelson)'
 
 import copy
@@ -109,7 +115,7 @@ class Point(object):
     """
     Returns a unit point in the same direction as self.
     """
-    return self.Times(1 / self.Norm2())
+    return self.Times(old_div(1, self.Norm2()))
 
   def RobustCrossProd(self, other):
     """
@@ -230,7 +236,7 @@ def GetClosestPoint(x, a, b):
   # project to the great circle going through a and b
   p = x.Minus(
       a_cross_b.Times(
-      x.DotProd(a_cross_b) / a_cross_b.Norm2()))
+      old_div(x.DotProd(a_cross_b), a_cross_b.Norm2())))
 
   # if p lies between a and b, return it
   if SimpleCCW(a_cross_b, a, p) and SimpleCCW(p, b, a_cross_b):
@@ -416,7 +422,7 @@ class PolyCollection(object):
     within max_radius of the given start and end points.
     """
     matches = []
-    for shape in self._name_to_shape.itervalues():
+    for shape in list(self._name_to_shape.values()):
       if start_point.GetDistanceMeters(shape.GetPoint(0)) < max_radius and \
         end_point.GetDistanceMeters(shape.GetPoint(-1)) < max_radius:
         matches.append(shape)
@@ -540,7 +546,7 @@ class PolyGraph(PolyCollection):
     paths_found = [] # A heap sorted by inverse path length.
 
     for i, point in enumerate(points):
-      nearby = [p for p in self._nodes.iterkeys()
+      nearby = [p for p in list(self._nodes.keys())
                 if p.GetDistanceMeters(point) < max_radius]
       if verbosity >= 2:
         print ("Nearby points for point %d %s: %s"

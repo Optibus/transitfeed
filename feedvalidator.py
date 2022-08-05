@@ -20,7 +20,13 @@
 For usage information run feedvalidator.py --help
 """
 from __future__ import print_function
+from __future__ import division
 
+from builtins import zip
+from builtins import input
+from past.builtins import basestring
+from builtins import object
+from past.utils import old_div
 import bisect
 import codecs
 import datetime
@@ -97,7 +103,7 @@ def CalendarSummary(schedule):
   for date, day_trips, day_departures in date_trips_departures:
     trips += day_trips
     trips_dates[day_trips].append(date)
-  mean_trips = trips / len(date_trips_departures)
+  mean_trips = old_div(trips, len(date_trips_departures))
   max_trips = max(trips_dates.keys())
   min_trips = min(trips_dates.keys())
 
@@ -234,12 +240,12 @@ class LimitPerTypeProblemAccumulator(transitfeed.ProblemAccumulatorInterface):
     self._type_to_name_to_problist[e.GetType()][e.__class__.__name__].Add(e)
 
   def ErrorCount(self):
-    error_sets = self._type_to_name_to_problist[TYPE_ERROR].values()
-    return sum(map(lambda v: v.count, error_sets))
+    error_sets = list(self._type_to_name_to_problist[TYPE_ERROR].values())
+    return sum([v.count for v in error_sets])
 
   def WarningCount(self):
-    warning_sets = self._type_to_name_to_problist[TYPE_WARNING].values()
-    return sum(map(lambda v: v.count, warning_sets))
+    warning_sets = list(self._type_to_name_to_problist[TYPE_WARNING].values())
+    return sum([v.count for v in warning_sets])
 
   def ProblemList(self, problem_type, class_name):
     """Return the BoundedProblemList object for given type and class."""
@@ -299,9 +305,9 @@ class HTMLCountingProblemAccumulator(LimitPerTypeProblemAccumulator):
     """Append HTML version of e to list output."""
     d = e.GetDictToFormat()
     for k in ('file_name', 'feedname', 'column_name'):
-      if k in d.keys():
+      if k in list(d.keys()):
         d[k] = '<code>%s</code>' % d[k]
-    if 'url' in d.keys():
+    if 'url' in list(d.keys()):
       d['url'] = '<a href="%(url)s">%(url)s</a>' % d
 
     problem_text = e.FormatProblem(d).replace('\n', '<br>')
@@ -379,7 +385,7 @@ class HTMLCountingProblemAccumulator(LimitPerTypeProblemAccumulator):
 
     if self.HasNotices():
       summary = ('<h3 class="issueHeader">Notices:</h3>' + 
-          self.FormatType("Notice", self.ProblemListMap(TYPE_NOTICE).items()) +
+          self.FormatType("Notice", list(self.ProblemListMap(TYPE_NOTICE).items())) +
           summary)
 
     basename = os.path.basename(feed_location)
@@ -493,10 +499,10 @@ FeedValidator</a> version %s on %s.
     f.write(transitfeed.EncodeUnicode(output_prefix))
     if self.ProblemListMap(TYPE_ERROR):
       f.write('<h3 class="issueHeader">Errors:</h3>')
-      f.write(self.FormatType("Error", self.ProblemListMap(TYPE_ERROR).items()))
+      f.write(self.FormatType("Error", list(self.ProblemListMap(TYPE_ERROR).items())))
     if self.ProblemListMap(TYPE_WARNING):
       f.write('<h3 class="issueHeader">Warnings:</h3>')
-      f.write(self.FormatType("Warning", self.ProblemListMap(TYPE_WARNING).items()))
+      f.write(self.FormatType("Warning", list(self.ProblemListMap(TYPE_WARNING).items())))
     f.write(transitfeed.EncodeUnicode(output_suffix))
 
 
@@ -681,7 +687,7 @@ https://github.com/google/transitfeed/wiki/FeedValidator
 
   if not len(args) == 1:
     if options.manual_entry:
-      feed = raw_input('Enter Feed Location: ')
+      feed = input('Enter Feed Location: ')
     else:
       parser.error('You must provide the path of a single feed')
   else:

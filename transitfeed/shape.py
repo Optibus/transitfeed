@@ -15,6 +15,8 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from __future__ import division
+from past.utils import old_div
 import bisect
 
 from .gtfsfactoryuser import GtfsFactoryUser
@@ -165,6 +167,6 @@ class Shape(GtfsFactoryUser):
       return None
     # This won't work crossing longitude 180 and is only an approximation which
     # works well for short distance.
-    lat = (lat1 * ca + lat0 * bc) / ba
-    lng = (lng1 * ca + lng0 * bc) / ba
+    lat = old_div((lat1 * ca + lat0 * bc), ba)
+    lng = old_div((lng1 * ca + lng0 * bc), ba)
     return (lat, lng, shape_dist_traveled)

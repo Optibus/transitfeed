@@ -17,6 +17,7 @@
 """Unit tests for the kmlwriter module."""
 
 from __future__ import absolute_import
+from builtins import map
 import os
 import tempfile
 import unittest

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from builtins import str
 from .pybcp47 import Bcp47LanguageParser
 from transitfeed import problems as problems_class
 from transitfeed import util

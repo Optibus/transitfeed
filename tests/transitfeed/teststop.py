@@ -15,6 +15,8 @@
 # Unit tests for the stop module.
 from __future__ import absolute_import
 
+from builtins import str
+from past.builtins import basestring
 from tests import util
 import transitfeed
 

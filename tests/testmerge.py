@@ -18,6 +18,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+from builtins import str
+from builtins import range
+from builtins import object
 __author__ = 'timothy.stranex@gmail.com (Timothy Stranex)'
 
 import merge
@@ -145,7 +148,7 @@ class TestApproximateDistanceBetweenPoints(util.TestCase):
 
 class TestSchemedMerge(util.TestCase):
 
-  class TestEntity:
+  class TestEntity(object):
     """A mock entity (like Route or Stop) for testing."""
 
     def __init__(self, x, y, z):
@@ -169,7 +172,7 @@ class TestSchemedMerge(util.TestCase):
     self.ds._Migrate = Migrate
 
   def testMergeIdentical(self):
-    class TestAttrib:
+    class TestAttrib(object):
       """An object that is equal to everything."""
 
       def __cmp__(self, b):
@@ -299,7 +302,7 @@ class TestSchemedMerge(util.TestCase):
 
 class TestFeedMerger(util.TestCase):
 
-  class Merger:
+  class Merger(object):
     def __init__(self, test, n, should_fail=False):
       self.test = test
       self.n = n
@@ -323,13 +326,13 @@ class TestFeedMerger(util.TestCase):
     for i in range(10):
       self.fm.AddMerger(TestFeedMerger.Merger(self, i))
     self.assert_(self.fm.MergeSchedules())
-    self.assertEquals(self.called, range(10))
+    self.assertEquals(self.called, list(range(10)))
 
   def testStopsAfterError(self):
     for i in range(10):
       self.fm.AddMerger(TestFeedMerger.Merger(self, i, i == 5))
     self.assert_(not self.fm.MergeSchedules())
-    self.assertEquals(self.called, range(6))
+    self.assertEquals(self.called, list(range(6)))
 
   def testRegister(self):
     s1 = transitfeed.Stop(stop_id='1')
@@ -467,10 +470,10 @@ class TestServicePeriodMerger(util.TestCase):
 
     self.spm.DisjoinCalendars('20080101')
 
-    self.assert_('20071201' in self.sp1.date_exceptions.keys())
-    self.assert_('20081231' not in self.sp1.date_exceptions.keys())
-    self.assert_('20071201' not in self.sp2.date_exceptions.keys())
-    self.assert_('20081231' in self.sp2.date_exceptions.keys())
+    self.assert_('20071201' in list(self.sp1.date_exceptions.keys()))
+    self.assert_('20081231' not in list(self.sp1.date_exceptions.keys()))
+    self.assert_('20071201' not in list(self.sp2.date_exceptions.keys()))
+    self.assert_('20081231' in list(self.sp2.date_exceptions.keys()))
 
   def testUnion(self):
     self._AddTwoPeriods('20071213', '20071231',
@@ -576,7 +579,7 @@ class TestAgencyMerger(util.TestCase):
     # Force a1.agency_id to be unicode to make sure it is correctly encoded
     # to utf-8 before concatinating to the agency_name containing non-ascii
     # characters.
-    self.a1.agency_id = unicode(self.a1.agency_id)
+    self.a1.agency_id = str(self.a1.agency_id)
     self.a2.agency_id = str(self.a1.agency_id)
     self.a2.agency_name = 'different \xc3\xa9'
     self.fm.a_schedule.AddAgencyObject(self.a1)

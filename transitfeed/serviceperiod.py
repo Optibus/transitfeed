@@ -15,6 +15,9 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from builtins import str
+from builtins import range
+from builtins import object
 import datetime
 import re
 import time
@@ -89,7 +92,7 @@ class ServicePeriod(object):
     start = self.start_date
     end = self.end_date
 
-    for date, (exception_type, _) in self.date_exceptions.items():
+    for date, (exception_type, _) in list(self.date_exceptions.items()):
       if exception_type == self._EXCEPTION_TYPE_REMOVE:
         continue
       if not start or (date < start):
@@ -112,8 +115,8 @@ class ServicePeriod(object):
   def GenerateCalendarDatesFieldValuesTuples(self):
     """Generates tuples of calendar_dates.txt values. Yield zero tuples if
     this ServicePeriod should not be in calendar_dates.txt ."""
-    for date, (exception_type, _) in self.date_exceptions.items():
-      yield (self.service_id, date, unicode(exception_type))
+    for date, (exception_type, _) in list(self.date_exceptions.items()):
+      yield (self.service_id, date, str(exception_type))
 
   def GetCalendarDatesFieldValuesTuples(self):
     """Return a list of date execeptions"""
@@ -306,13 +309,13 @@ class ServicePeriod(object):
                             type=problems_module.TYPE_WARNING)
 
   def HasDateExceptionTypeAdded(self):
-    for exception_type, _ in self.date_exceptions.values():
+    for exception_type, _ in list(self.date_exceptions.values()):
       if exception_type == self._EXCEPTION_TYPE_ADD:
         return True
     return False
 
   def ValidateDates(self, problems):
-    for date, (exception_type, context) in self.date_exceptions.items():
+    for date, (exception_type, context) in list(self.date_exceptions.items()):
       self.ValidateDate(date, 'date', problems, context)
 
   def ValidateDate(self, date, field_name, problems, context=None):

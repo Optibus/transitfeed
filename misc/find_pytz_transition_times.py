@@ -24,6 +24,7 @@ based on zic.c or zdump.c in tzcode2009k.tar.gz but this seemed much easier.
 """
 from __future__ import print_function
 
+from builtins import zip
 import pytz
 import datetime
 

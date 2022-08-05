@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 from __future__ import print_function
+from __future__ import division
+from past.utils import old_div
 import argparse
 parser = argparse.ArgumentParser()
 
@@ -8,7 +10,7 @@ def CrashOrNot(crash_commanded):
   some_value = 1
   if crash_commanded:
     some_value -= 1
-  print("All good, you get {}".format(1 / some_value))
+  print("All good, you get {}".format(old_div(1, some_value)))
 
 def main():
   parser = argparse.ArgumentParser()

@@ -38,7 +38,7 @@ class UnusualTripFilterTestCase(util.TempDirTestCaseBase):
     loader = transitfeed.Loader(input, extra_validation=True)
     schedule = loader.Load()
     filter.filter(schedule)
-    for trip_id, expected_trip_type in expected_values.items():
+    for trip_id, expected_trip_type in list(expected_values.items()):
       actual_trip_type = schedule.trips[trip_id]['trip_type']
       try:
         self.assertEquals(int(actual_trip_type), expected_trip_type)

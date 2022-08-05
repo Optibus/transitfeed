@@ -17,7 +17,10 @@
 """Tests for transitfeed.shapelib.py"""
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import division
 
+from builtins import range
+from past.utils import old_div
 __author__ = 'chris.harrelson.code@gmail.com (Chris Harrelson)'
 
 import math
@@ -58,7 +61,7 @@ class ShapeLibTestBase(util.TestCase):
     except AssertionError:
       print("ERROR: %s != %s" % (formatPoints(points1), formatPoints(points2)))
       raise
-    for i in xrange(len(points1)):
+    for i in range(len(points1)):
       try:
         self.assertPointApproxEq(points1[i], points2[i])
       except AssertionError:
@@ -80,9 +83,9 @@ class TestPoints(ShapeLibTestBase):
 
     norm = 1.7320508075688772
     self.assertPointApproxEq(p.Normalize(),
-                                    Point(1 / norm,
-                                          1 / norm,
-                                          1 / norm))
+                                    Point(old_div(1, norm),
+                                          old_div(1, norm),
+                                          old_div(1, norm)))
 
     p2 = Point(1, 0, 0)
     self.assertPointApproxEq(p2, p2.Normalize())
@@ -122,7 +125,7 @@ class TestPoints(ShapeLibTestBase):
   def testAngle(self):
     point1 = Point(1, 1, 0).Normalize()
     point2 = Point(0, 1, 0)
-    self.assertApproxEq(45, point1.Angle(point2) * 360 / (2 * math.pi))
+    self.assertApproxEq(45, old_div(point1.Angle(point2) * 360, (2 * math.pi)))
     self.assertApproxEq(point1.Angle(point2), point2.Angle(point1))
 
   def testGetDistanceMeters(self):

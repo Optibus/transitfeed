@@ -15,6 +15,7 @@
 # Unit tests for the schedule module.
 from __future__ import absolute_import
 
+from builtins import zip
 from tests import util
 import transitfeed
 
@@ -372,7 +373,7 @@ class WriteSampleFeedTestCase(util.TempFileTestCaseBase):
                   ("16:00:00", "16:00:00", "BEATTY_AIRPORT", None, None, None, None)],
       }
 
-    for trip_id, stop_time_list in stop_time_data.items():
+    for trip_id, stop_time_list in list(stop_time_data.items()):
       for stop_time_entry in stop_time_list:
         (arrival_time, departure_time, stop_id, shape_dist_traveled,
             pickup_type, drop_off_type, stop_headsign) = stop_time_entry
@@ -487,7 +488,7 @@ class WriteSampleFeedTestCase(util.TempFileTestCaseBase):
       self.assertEqual(headway_trips[trip_id],
                        read_schedule.GetTrip(trip_id).GetFrequencyTuples())
 
-    for trip_id, stop_time_list in stop_time_data.items():
+    for trip_id, stop_time_list in list(stop_time_data.items()):
       trip = read_schedule.GetTrip(trip_id)
       read_stoptimes = trip.GetStopTimes()
       self.assertEqual(len(read_stoptimes), len(stop_time_list))

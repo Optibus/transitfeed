@@ -68,6 +68,7 @@ Translations in GTFS-Translations format.
 
 from __future__ import print_function
 
+from builtins import object
 import csv
 import os
 import os.path
@@ -235,7 +236,7 @@ class OldTranslations(object):
           headsign-1,en,To Palace
         """
         n_occurences_of_original = {}
-        for trans_id, translations in self.translations_map.items():
+        for trans_id, translations in list(self.translations_map.items()):
             try:
                 original_name = translations[self.feed_language]
             except KeyError:
@@ -248,7 +249,7 @@ class OldTranslations(object):
 
         self.context_dependent_names = set(
             name
-            for name, occur in n_occurences_of_original.items()
+            for name, occur in list(n_occurences_of_original.items())
             if occur > 1)
         print('Total context-dependent translations: %d' %
               len(self.context_dependent_names))
@@ -347,7 +348,7 @@ class TableTranslator(object):
         translations_map = self.old_translations.translations_map
         context_dependent_names = self.old_translations.context_dependent_names
         out_row = row
-        for field_name, field_value in row.items():
+        for field_name, field_value in list(row.items()):
             if not is_translatable_field(field_name):
                 continue
             field_translations = translations_map.get(field_value)
@@ -361,7 +362,7 @@ class TableTranslator(object):
                 value_in_feed_lang in context_dependent_names)
             record_id = self.record_id_helper.get_record_id(row)
             record_sub_id = self.record_id_helper.get_record_sub_id(row)
-            for language, translation in field_translations.items():
+            for language, translation in list(field_translations.items()):
                 if language == feed_language:
                     continue
                 if use_record_id:
@@ -382,7 +383,7 @@ class TableTranslator(object):
 
     def write_for_field_values(self):
         for ((field_name, language, field_value),
-             translation) in self.translations_for_values.items():
+             translation) in list(self.translations_for_values.items()):
             self._write_translation_row({
                 'table_name': self.table_name,
                 'field_name': field_name,

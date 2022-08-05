@@ -16,6 +16,7 @@
 
 from __future__ import absolute_import
 
+from builtins import object
 from . import problems as problems_module
 from .stop import Stop
 from . import util

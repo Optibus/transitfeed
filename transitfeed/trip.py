@@ -15,6 +15,10 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from __future__ import division
+from builtins import str
+from past.builtins import basestring
+from past.utils import old_div
 import warnings
 
 from .gtfsobjectbase import GtfsObjectBase
@@ -208,7 +212,7 @@ class Trip(GtfsObjectBase):
         rv.append( (st.GetTimeSecs(), st, True) )
       else:
         distance_traveled_between_timepoints += util.ApproximateDistanceBetweenStops(stoptimes[i-1].stop, st.stop)
-        distance_percent = distance_traveled_between_timepoints / distance_between_timepoints
+        distance_percent = old_div(distance_traveled_between_timepoints, distance_between_timepoints)
         total_time = next_timepoint.GetTimeSecs() - cur_timepoint.GetTimeSecs()
         time_estimate = distance_percent * total_time + cur_timepoint.GetTimeSecs()
         rv.append( (int(round(time_estimate)), st, False) )
@@ -477,8 +481,8 @@ class Trip(GtfsObjectBase):
       return (self.trip_id,
               util.FormatSecondsSinceMidnight(headway[0]),
               util.FormatSecondsSinceMidnight(headway[1]),
-              unicode(headway[2]),
-              unicode(headway[3]))
+              str(headway[2]),
+              str(headway[3]))
 
   def GetFrequencyOutputTuples(self):
     tuples = []
@@ -738,7 +742,7 @@ class Trip(GtfsObjectBase):
         # https://github.com/google/transitfeed/issues/193
         # Show a warning if times are not rounded to the nearest minute or
         # distance is more than max_speed for one minute.
-        if depart_time % 60 != 0 or dist_between_stops / 1000 * 60 > max_speed:
+        if depart_time % 60 != 0 or old_div(dist_between_stops, 1000) * 60 > max_speed:
           problems.TooFastTravel(self.trip_id,
                                  prev_stop.stop_name,
                                  next_stop.stop_name,
@@ -748,8 +752,8 @@ class Trip(GtfsObjectBase):
                                  type=problems_module.TYPE_WARNING)
         return
       # This needs floating point division for precision.
-      speed_between_stops = ((float(dist_between_stops) / 1000) /
-                                (float(time_between_stops) / 3600))
+      speed_between_stops = (old_div((float(dist_between_stops) / 1000),
+                                (float(time_between_stops) / 3600)))
       if speed_between_stops > max_speed:
         problems.TooFastTravel(self.trip_id,
                                prev_stop.stop_name,
