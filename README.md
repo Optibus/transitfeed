@@ -1,4 +1,8 @@
-> ⚠️ **NOTE:**  This project is no longer actively maintained.  For up-to-date GTFS validation tools, see the https://github.com/MobilityData/gtfs-validator project. ⚠️
+# Futurized Python-3-compatible Transitfeed fork
+
+This repo contains a fork of the Google [`transitfeed`](https://github.com/google/transitfeed) project. We have run the Python Future `futurize` command on the codebase to work towards Python 3 compatibility. We also made a couple of adjustments to address errors that were raised in use cases we encountered in our usage of the tool.
+
+# Original Project README
 
 ## transitfeed
 
