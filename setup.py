@@ -26,7 +26,8 @@ for help on creating Windows executables.
 from distutils.core import setup
 import glob
 import os.path
-from transitfeed_version import __version__ as VERSION
+
+VERSION = '1.3.1'
 
 try:
   import py2exe
@@ -60,8 +61,8 @@ if has_py2exe:
 setup(
     version=VERSION,
     name='transitfeed',
-    url='https://github.com/google/transitfeed/',
-    download_url='https://github.com/google/transitfeed/archive/'
+    url='https://github.com/Optibus/transitfeed/',
+    download_url='https://github.com/Optibus/transitfeed/archive/'
         '%s.tar.gz' % VERSION,
     maintainer='Multiple',
     maintainer_email='transitfeed@googlegroups.com',
